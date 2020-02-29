@@ -47,12 +47,15 @@ app.post('/count', async (req, res) => {
   
         res.status(200).json({
           email,
-          count: currencyFormatter.format(0, { code: 'IDR' })
+          count: currencyFormatter.format(0, { code: 'IDR' }),
+          number: 0
         });
   
       } else {
   
         let result = 0;
+        let max = 0;
+        let topupCount = 0;
   
         parsed[4].forEach((e, i) => {
           const splitted = e.split('Buy: ')[1];
@@ -60,9 +63,10 @@ app.post('/count', async (req, res) => {
             const poin = splitted[splitted.length - 1] === 'P' ? splitted.split(' P')[0] : null;
             if (poin) {
               if (poin[0] === '+') {
-                console.log(poin)
                 const num = Number(poin.split('+')[1].split(',').join(''));
                 result += num;
+                topupCount += 1;
+                if (num > max) max = num;
               }
             }
           }
@@ -70,7 +74,10 @@ app.post('/count', async (req, res) => {
   
         res.status(200).json({
           email,
-          count: currencyFormatter.format(result, { code: 'IDR' })
+          count: currencyFormatter.format(result, { code: 'IDR' }),
+          number: result,
+          max: currencyFormatter.format(max, { code: 'IDR' }),
+          topupCount,
         });
   
       }
