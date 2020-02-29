@@ -2,6 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const tableParser = require('cheerio-tableparser');
 const randomString = require('randomstring');
+const currencyFormatter = require('currency-formatter');
 const cors = require('cors');
 
 const express = require('express');
@@ -45,7 +46,8 @@ app.post('/count', async (req, res) => {
       if (!parsed.length) {
   
         res.status(200).json({
-          count: 0
+          email,
+          count: currencyFormatter.format(0, { code: 'IDR' })
         });
   
       } else {
@@ -58,6 +60,7 @@ app.post('/count', async (req, res) => {
             const poin = splitted[splitted.length - 1] === 'P' ? splitted.split(' P')[0] : null;
             if (poin) {
               if (poin[0] === '+') {
+                console.log(poin)
                 const num = Number(poin.split('+')[1].split(',').join(''));
                 result += num;
               }
@@ -66,7 +69,8 @@ app.post('/count', async (req, res) => {
         });
   
         res.status(200).json({
-          count: result
+          email,
+          count: currencyFormatter.format(result, { code: 'IDR' })
         });
   
       }
